@@ -13,3 +13,7 @@ class QuizState {
       [for (int j = 0; j < 6; j++) '${i + 1}. téma ${j + 1}. kérdése'],
   ];
 }
+
+void askQuestion(int row, int col) {
+  print(QuizState.questions[col][row]);
+}
