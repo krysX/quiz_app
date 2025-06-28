@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app/question_board.dart';
 import 'backend.dart';
 import 'button_board.dart';
 import 'sidebar.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GameStateModel(
+        path: 'demo.txt',
+        nTopics: 5,
+        nLevels: 6,
+        players: ['A', 'B', 'C', 'D', 'E', 'F'],
+        teams: [
+          TeamModel(playerIDs: {0, 1, 2}),
+          TeamModel(playerIDs: {1, 2, 4}),
+          TeamModel(playerIDs: {3, 5, 6}),
+        ],
+      ),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -33,8 +50,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //bool isQuestionSelected = false;
+  //String currentQuestion
+
   @override
   Widget build(BuildContext context) {
+    var gameState = context.watch<GameStateModel>();
+    Widget bigArea = gameState.currentQuestion == null
+        ? QuestionBoard(
+            question: gameState.getQuestionText(gameState.currentQuestion),
+          )
+        : ButtonBoard();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -42,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Row(
         children: <Widget>[
-          Expanded(flex: 4, child: ButtonBoard()),
+          Expanded(flex: 4, child: bigArea),
           Expanded(flex: 1, child: Sidebar()),
         ],
       ),
