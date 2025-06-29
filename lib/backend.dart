@@ -90,7 +90,10 @@ class GameStateModel extends ChangeNotifier {
         (level) => '${topic + 1}. téma ${level + 1}. kérdése',
       ),
     );
-    topicNames = List<String>.generate(nTopics, (topic) => '$topic. téma');
+    topicNames = List<String>.generate(
+      nTopics,
+      (topic) => '${topic + 1}. téma',
+    );
     notifyListeners();
   }
 

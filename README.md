@@ -1,8 +1,10 @@
 # quiz_app
 
-A quiz app in the making.
+![The image of the app.](screenshot.png)
 
-Note: The current version is designed mainly for desktop use.
+A quiz app in the making, using Flutter.
+
+Note: The current version is mainly designed for desktop use.
 
 Run with: 
 ```flutter run```
