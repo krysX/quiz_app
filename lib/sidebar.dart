@@ -1,23 +1,48 @@
 import 'package:flutter/material.dart';
+import 'backend.dart';
 
 class Sidebar extends StatelessWidget {
-  const Sidebar({super.key});
+  const Sidebar({
+    super.key,
+    required this.playerNames,
+    required this.teams,
+    required this.onPressed,
+  });
+
+  final List<String> playerNames;
+  final List<TeamModel> teams;
+  final bool Function(int, bool) onPressed;
 
   @override
   Widget build(BuildContext context) {
+    int i = 0;
     return ListView(
       children: [
-        for (int i = 0; i < 5; i++)
-          TeamCard(playerNames: {'Aladár', 'Béla', 'Cecil'}),
+        for (var team in teams)
+          TeamCard(
+            teamID: i++,
+            playerNames: {for (int id in team.playerIDs) playerNames[id]},
+            score: team.score,
+            onPressed: onPressed,
+          ),
       ],
     );
   }
 }
 
 class TeamCard extends StatelessWidget {
-  const TeamCard({super.key, required this.playerNames});
+  const TeamCard({
+    super.key,
+    required this.teamID,
+    required this.playerNames,
+    required this.score,
+    required this.onPressed,
+  });
 
+  final int teamID;
   final Set<String> playerNames;
+  final int score;
+  final bool Function(int, bool) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +52,7 @@ class TeamCard extends StatelessWidget {
           Wrap(
             children: [for (var name in playerNames) Chip(label: Text(name))],
           ),
-          TeamCounter(score: 35000),
+          TeamCounter(teamID: teamID, score: score, onPressed: onPressed),
         ],
       ),
     );
@@ -35,9 +60,16 @@ class TeamCard extends StatelessWidget {
 }
 
 class TeamCounter extends StatefulWidget {
-  const TeamCounter({super.key, required this.score});
+  const TeamCounter({
+    super.key,
+    required this.teamID,
+    required this.score,
+    required this.onPressed,
+  });
 
+  final int teamID;
   final int score;
+  final bool Function(int, bool) onPressed;
 
   //
   @override
@@ -60,14 +92,26 @@ class TeamCounterState extends State<TeamCounter> {
             child: Center(child: Text('${widget.score}', style: textStyle)),
           ),
         ),
-        Positioned(child: TeamScoreButtons()),
+        Positioned(
+          child: TeamScoreButtons(
+            teamID: widget.teamID,
+            onPressed: widget.onPressed,
+          ),
+        ),
       ],
     );
   }
 }
 
 class TeamScoreButtons extends StatelessWidget {
-  const TeamScoreButtons({super.key});
+  const TeamScoreButtons({
+    super.key,
+    required this.teamID,
+    required this.onPressed,
+  });
+
+  final int teamID;
+  final bool Function(int, bool) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +119,14 @@ class TeamScoreButtons extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.check)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.circle)),
+          IconButton(
+            onPressed: () => onPressed(teamID, true),
+            icon: Icon(Icons.check),
+          ),
+          IconButton(
+            onPressed: () => onPressed(teamID, false),
+            icon: Icon(Icons.circle),
+          ),
         ],
       ),
     );

@@ -16,7 +16,7 @@ void main() {
         teams: [
           TeamModel(playerIDs: {0, 1, 2}),
           TeamModel(playerIDs: {1, 2, 4}),
-          TeamModel(playerIDs: {3, 5, 6}),
+          TeamModel(playerIDs: {3, 5, 4}),
         ],
       ),
       child: const MyApp(),
@@ -56,11 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var gameState = context.watch<GameStateModel>();
-    Widget bigArea = gameState.currentQuestion == null
+    Widget bigArea = gameState.currentQuestion != null
         ? QuestionBoard(
-            question: gameState.getQuestionText(gameState.currentQuestion),
+            questionText: gameState.getQuestionText(gameState.currentQuestion),
           )
-        : ButtonBoard();
+        : ButtonBoard(
+            onQuizButtonPressed: gameState.pickQuestion,
+            levelPoints: gameState.levelValues,
+            topicNames: gameState.topicNames,
+          );
 
     return Scaffold(
       appBar: AppBar(
@@ -70,7 +74,14 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Row(
         children: <Widget>[
           Expanded(flex: 4, child: bigArea),
-          Expanded(flex: 1, child: Sidebar()),
+          Expanded(
+            flex: 1,
+            child: Sidebar(
+              playerNames: gameState.players,
+              teams: gameState.teams,
+              onPressed: gameState.answerQuestion,
+            ),
+          ),
         ],
       ),
     );

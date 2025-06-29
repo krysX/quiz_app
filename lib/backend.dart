@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 //import 'package:provider/provider.dart';
 
 class TeamModel {
@@ -35,7 +36,12 @@ class GameStateModel extends ChangeNotifier {
     required this.players,
     required this.teams,
   }) {
-    final file = File(path);
+    var appDocDir;
+    getApplicationDocumentsDirectory().then((dir) {
+      appDocDir = dir.path;
+    });
+    print('$appDocDir');
+    final file = File('$appDocDir/$path');
     Stream<String> lines = file
         .openRead()
         .transform(utf8.decoder)
@@ -56,15 +62,18 @@ class GameStateModel extends ChangeNotifier {
           lines.elementAt(topic * (nLevels + 1 + 1) + (level + 1)).then((str) {
             question = str;
           });
+          print(question);
           return question;
         }),
       );
 
+      print("");
       _topicNames = List<String>.generate(nTopics, (int topic) {
         String topicName = "";
         lines.elementAt(topic * (nLevels + 1 + 1)).then((str) {
           topicName = str;
         });
+        print(topicName);
         return topicName;
       });
     } catch (e) {
@@ -73,6 +82,7 @@ class GameStateModel extends ChangeNotifier {
 
     questions = _questions;
     topicNames = _topicNames;
+    notifyListeners();
   }
 
   final String path;

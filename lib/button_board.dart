@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'backend.dart';
 
 class ButtonBoard extends StatelessWidget {
-  const ButtonBoard({super.key});
+  const ButtonBoard({
+    super.key,
+    required this.onQuizButtonPressed,
+    required this.levelPoints,
+    required this.topicNames,
+  });
+  final Function(int, int) onQuizButtonPressed;
+  final List<int> levelPoints;
+  final List<String> topicNames;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +19,12 @@ class ButtonBoard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         for (int i = 0; i < 5; i++)
-          QuizColumn(topicName: QuizState.topicNames[i], col: i),
+          QuizColumn(
+            topicName: topicNames[i],
+            col: i,
+            onButtonPressed: onQuizButtonPressed,
+            levelPoints: levelPoints,
+          ),
       ],
     );
   }
@@ -20,12 +33,19 @@ class ButtonBoard extends StatelessWidget {
 }
 
 class QuizColumn extends StatelessWidget {
-  const QuizColumn({super.key, required this.topicName, required this.col});
+  const QuizColumn({
+    super.key,
+    required this.topicName,
+    required this.col,
+    required this.onButtonPressed,
+    required this.levelPoints,
+  });
+  final Function(int, int) onButtonPressed;
+  final List<int> levelPoints;
 
   final String topicName;
   final int col;
   //final TextStyle bigText =
-  static const values = [1000, 2000, 3500, 4000, 5000, 8000];
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +62,15 @@ class QuizColumn extends StatelessWidget {
             spacing: 20.0,
             children: [
               Flexible(flex: 1, child: Text(topicName, style: textStyle)),
-              for (int j = 0; j < 6; j++)
+              for (int j = 0; j < levelPoints.length; j++)
                 Flexible(
                   flex: 1,
-                  child: QuizButton(row: j, col: col, value: values[j]),
+                  child: QuizButton(
+                    row: j,
+                    col: col,
+                    value: levelPoints[j],
+                    onPressed: onButtonPressed,
+                  ),
                 ),
             ],
           ),
@@ -61,7 +86,10 @@ class QuizButton extends StatefulWidget {
     required this.row,
     required this.col,
     required this.value,
+    required this.onPressed,
   });
+
+  final Function(int, int) onPressed;
 
   final int value;
   final int row, col;
@@ -90,7 +118,7 @@ class QuizButtonState extends State<QuizButton> {
       setState(() {
         _isClicked = true;
       });
-      askQuestion(widget.row, widget.col);
+      widget.onPressed(widget.row, widget.col);
     }
 
     final buttonStyle = ButtonStyle(
