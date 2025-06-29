@@ -11,7 +11,7 @@ void main() {
       create: (context) => GameStateModel(
         path: 'demo.txt',
         nTopics: 5,
-        nLevels: 6,
+        levelValues: [1000, 2000, 3000, 4000, 5000, 8000],
         players: ['A', 'B', 'C', 'D', 'E', 'F'],
         teams: [
           TeamModel(playerIDs: {0, 1, 2}),
@@ -58,12 +58,12 @@ class _MyHomePageState extends State<MyHomePage> {
     var gameState = context.watch<GameStateModel>();
     Widget bigArea = gameState.currentQuestion != null
         ? QuestionBoard(
-            questionText: gameState.getQuestionText(gameState.currentQuestion),
+            //questionText: gameState.getQuestionText(gameState.currentQuestion),
           )
         : ButtonBoard(
-            onQuizButtonPressed: gameState.pickQuestion,
-            levelPoints: gameState.levelValues,
-            topicNames: gameState.topicNames,
+            //onQuizButtonPressed: gameState.pickQuestion,
+            //levelPoints: gameState.levelValues,
+            //topicNames: gameState.topicNames,
           );
 
     return Scaffold(
@@ -77,9 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             flex: 1,
             child: Sidebar(
-              playerNames: gameState.players,
-              teams: gameState.teams,
-              onPressed: gameState.answerQuestion,
+              //playerNames: gameState.players,
+              //teams: gameState.teams,
+              //onPressed: gameState.answerQuestion,
             ),
           ),
         ],
