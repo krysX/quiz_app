@@ -1,6 +1,6 @@
-import 'dart:io';
-import 'dart:async';
-import 'dart:convert';
+//import 'dart:io';
+//import 'dart:async';
+//import 'dart:convert';
 
 import 'package:flutter/material.dart';
 //import 'package:path_provider/path_provider.dart';
@@ -32,7 +32,6 @@ class GameStateModel extends ChangeNotifier {
   GameStateModel({
     required this.path,
     required this.nTopics,
-    //required this.levelValues.length,
     required this.levelValues,
     required this.players,
     required this.teams,
@@ -141,7 +140,7 @@ class GameStateModel extends ChangeNotifier {
   }
 
   bool answerQuestion(int teamId, bool isCorrect) {
-    if (currentAnswer.teamId == -1) return false;
+    if (teamId == -1 || currentAnswer.teamId != -1) return false;
     var questionPoints = getValue(currentQuestion);
     currentAnswer = AnswerScoringModel(
       teamId: teamId,
@@ -150,10 +149,11 @@ class GameStateModel extends ChangeNotifier {
     );
 
     if (isCorrect)
-      teams[currentAnswer.teamId].score += currentAnswer.points;
+      teams[teamId].score += questionPoints;
     else
-      teams[currentAnswer.teamId].score -= currentAnswer.points;
+      teams[teamId].score -= questionPoints;
 
+    print('$teamId. csapat új pontszáma: ${teams[teamId].score}');
     currentQuestion = null;
     notifyListeners();
     return true;

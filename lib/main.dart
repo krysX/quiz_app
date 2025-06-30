@@ -12,7 +12,7 @@ void main() {
         path: 'demo.txt',
         nTopics: 5,
         levelValues: [1000, 2000, 3000, 4000, 5000, 8000],
-        players: ['A', 'B', 'C', 'D', 'E', 'F'],
+        players: ['Aladár', 'Béla', 'Cecil', 'Dénes', 'Elemér', 'Ferenc'],
         teams: [
           TeamModel(playerIDs: {0, 1, 2}),
           TeamModel(playerIDs: {1, 2, 4}),
@@ -56,15 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var gameState = context.watch<GameStateModel>();
-    Widget bigArea = gameState.currentQuestion != null
-        ? QuestionBoard(
-            //questionText: gameState.getQuestionText(gameState.currentQuestion),
-          )
-        : ButtonBoard(
-            //onQuizButtonPressed: gameState.pickQuestion,
-            //levelPoints: gameState.levelValues,
-            //topicNames: gameState.topicNames,
-          );
 
     return Scaffold(
       appBar: AppBar(
@@ -73,15 +64,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Row(
         children: <Widget>[
-          Expanded(flex: 4, child: bigArea),
           Expanded(
-            flex: 1,
-            child: Sidebar(
-              //playerNames: gameState.players,
-              //teams: gameState.teams,
-              //onPressed: gameState.answerQuestion,
+            flex: 4,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ButtonBoard(),
+                Visibility(
+                  visible: gameState.currentQuestion != null,
+                  child: QuestionBoard(),
+                ),
+              ],
             ),
           ),
+          Expanded(flex: 1, child: Sidebar()),
         ],
       ),
     );

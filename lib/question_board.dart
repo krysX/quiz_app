@@ -17,9 +17,11 @@ class QuestionBoard extends StatelessWidget {
       padding: const EdgeInsets.all(50.0),
       child: Card.filled(
         color: colorScheme.onPrimary,
-        child: Text(
-          gameState.getQuestionText(gameState.currentQuestion),
-          style: textStyle,
+        child: Center(
+          child: Text(
+            gameState.getQuestionText(gameState.currentQuestion),
+            style: textStyle,
+          ),
         ),
       ),
     );

@@ -3,16 +3,7 @@ import 'backend.dart';
 import 'package:provider/provider.dart';
 
 class Sidebar extends StatelessWidget {
-  const Sidebar({
-    super.key,
-    //required this.playerNames,
-    //required this.teams,
-    //required this.onPressed,
-  });
-
-  //final List<String> playerNames;
-  //final List<TeamModel> teams;
-  //final bool Function(int, bool) onPressed;
+  const Sidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +15,6 @@ class Sidebar extends StatelessWidget {
           TeamCard(
             teamID: i++,
             playerNames: {for (int id in team.playerIDs) gameState.players[id]},
-            //score: team.score,
-            //onPressed: onPressed,
           ),
       ],
     );
@@ -33,18 +22,10 @@ class Sidebar extends StatelessWidget {
 }
 
 class TeamCard extends StatelessWidget {
-  const TeamCard({
-    super.key,
-    required this.teamID,
-    required this.playerNames,
-    //required this.score,
-    //required this.onPressed,
-  });
+  const TeamCard({super.key, required this.teamID, required this.playerNames});
 
   final int teamID;
   final Set<String> playerNames;
-  //final int score;
-  //final bool Function(int, bool) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -64,51 +45,28 @@ class TeamCard extends StatelessWidget {
 }
 
 class TeamCounter extends StatefulWidget {
-  const TeamCounter({
-    super.key,
-    required this.teamID,
-    //required this.score,
-    //required this.onPressed,
-  });
+  const TeamCounter({super.key, required this.teamID});
 
   final int teamID;
-  //final int score;
-  //final bool Function(int, bool) onPressed;
 
-  //
   @override
   State<TeamCounter> createState() => TeamCounterState();
 }
 
 class TeamCounterState extends State<TeamCounter> {
-  //int _score;
-
   @override
   Widget build(BuildContext context) {
     var textStyle = Theme.of(context).textTheme.displaySmall!;
     var gameState = context.watch<GameStateModel>();
 
-    return Stack(
+    var child = gameState.currentQuestion != null
+        ? TeamScoreButtons(teamID: widget.teamID)
+        : Text('${gameState.teams[widget.teamID].score}', style: textStyle);
+
+    return Container(
       alignment: Alignment.center,
-      children: [
-        Positioned(
-          child: Container(
-            padding: EdgeInsets.all(20.0),
-            child: Center(
-              child: Text(
-                '${gameState.teams[widget.teamID].score}',
-                style: textStyle,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          child: TeamScoreButtons(
-            teamID: widget.teamID,
-            //onPressed: gameState.answerQuestion(widget.teamID, false),
-          ),
-        ),
-      ],
+      padding: EdgeInsets.all(20.0),
+      child: child,
     );
   }
 }
@@ -121,7 +79,6 @@ class TeamScoreButtons extends StatelessWidget {
   });
 
   final int teamID;
-  //final bool Function(int, bool) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -132,12 +89,23 @@ class TeamScoreButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            onPressed: () => gameState.answerQuestion(teamID, true),
+            onPressed: () {
+              var result = gameState.answerQuestion(teamID, true);
+              //print('answerQuestion returned with ${result}');
+              print(
+                '$teamID. csapat új pontszáma: ${gameState.teams[teamID].score}',
+              );
+            },
             icon: Icon(Icons.check),
           ),
           IconButton(
-            onPressed: () => gameState.answerQuestion(teamID, false),
-            icon: Icon(Icons.circle),
+            onPressed: () {
+              gameState.answerQuestion(teamID, false);
+              print(
+                '$teamID. csapat új pontszáma: ${gameState.teams[teamID].score}',
+              );
+            },
+            icon: Icon(Icons.clear),
           ),
         ],
       ),

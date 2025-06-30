@@ -3,15 +3,7 @@ import 'package:provider/provider.dart';
 import 'backend.dart';
 
 class ButtonBoard extends StatelessWidget {
-  const ButtonBoard({
-    super.key,
-    //required this.onQuizButtonPressed,
-    //required this.levelPoints,
-    //required this.topicNames,
-  });
-  //final Function(int, int) onQuizButtonPressed;
-  //final List<int> levelPoints;
-  //final List<String> topicNames;
+  const ButtonBoard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +11,7 @@ class ButtonBoard extends StatelessWidget {
     return Row(
       spacing: 20.0,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        for (int i = 0; i < 5; i++)
-          QuizColumn(
-            //topicName: gameState.topicNames[i],
-            col: i,
-            //onButtonPressed: gameState.pickQuestion,
-            //levelPoints: gameState.levelValues,
-          ),
-      ],
+      children: <Widget>[for (int i = 0; i < 5; i++) QuizColumn(col: i)],
     );
   }
 
@@ -35,48 +19,31 @@ class ButtonBoard extends StatelessWidget {
 }
 
 class QuizColumn extends StatelessWidget {
-  const QuizColumn({
-    super.key,
-    //required this.topicName,
-    required this.col,
-    //required this.onButtonPressed,
-    //required this.levelPoints,
-  });
-  //final Function(int, int) onButtonPressed;
-  //final List<int> levelPoints;
+  const QuizColumn({super.key, required this.col});
 
-  //final String topicName;
   final int col;
-  //final TextStyle bigText =
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var textStyle = theme.textTheme.headlineSmall!.copyWith();
-    var gameState = Provider.of<GameStateModel>(context);
+    var gameState = context.watch<GameStateModel>();
 
     return Expanded(
-      child: Flexible(
+      child: Expanded(
         flex: 1,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          //crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 20.0,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 5.0,
           children: [
-            Flexible(
-              flex: 1,
-              child: Text(gameState.topicNames[col], style: textStyle),
-            ),
-            for (int j = 0; j < gameState.levelValues.length; j++)
-              Flexible(
-                flex: 1,
-                child: QuizButton(
-                  row: j,
-                  col: col,
-                  //value: gameState.levelValues[j],
-                  //onPressed: gameState.pickQuestion(col, j),
-                ),
-              ),
+            Spacer(),
+            Text(gameState.topicNames[col], style: textStyle),
+            Spacer(),
+            for (int j = 0; j < gameState.levelValues.length; j++) ...[
+              QuizButton(row: j, col: col),
+              Spacer(),
+            ],
           ],
         ),
       ),
@@ -85,17 +52,8 @@ class QuizColumn extends StatelessWidget {
 }
 
 class QuizButton extends StatefulWidget {
-  const QuizButton({
-    super.key,
-    required this.row,
-    required this.col,
-    //required this.value,
-    //required this.onPressed,
-  });
+  const QuizButton({super.key, required this.row, required this.col});
 
-  //final Function(int, int) onPressed;
-
-  //final int value;
   final int row, col;
 
   @override
@@ -120,6 +78,7 @@ class QuizButtonState extends State<QuizButton> {
     var value = gameState.levelValues[widget.row];
 
     void _onTap() {
+      if (_isClicked == true) return;
       print('${value}-es kérdés megjelölve');
       setState(() {
         _isClicked = true;
@@ -131,22 +90,13 @@ class QuizButtonState extends State<QuizButton> {
       backgroundColor: WidgetStateProperty.all<Color>(widgetColor),
     );
 
-    //final expand = BoxConstraints.expand();
-
-    return FittedBox(
-      fit: BoxFit.fitWidth,
-      child: Container(
-        constraints: BoxConstraints(
-          minWidth: 100.0,
-          minHeight: 40.0,
-          maxWidth: double.infinity,
-          maxHeight: 60.0,
-        ),
-        child: ElevatedButton(
-          onPressed: () => _onTap(),
-          style: buttonStyle,
-          child: Text('${value}', style: textStyle),
-        ),
+    return SizedBox(
+      height: 50,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () => _onTap(),
+        style: buttonStyle,
+        child: Text('$value', style: textStyle),
       ),
     );
   }
