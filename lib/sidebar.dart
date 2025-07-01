@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/timer_state.dart';
 import 'backend.dart';
 import 'package:provider/provider.dart';
 
@@ -11,12 +12,67 @@ class Sidebar extends StatelessWidget {
     int i = 0;
     return ListView(
       children: [
+        TimerCard(),
         for (var team in gameState.teams)
           TeamCard(
             teamID: i++,
             playerNames: {for (int id in team.playerIDs) gameState.players[id]},
           ),
       ],
+    );
+  }
+}
+
+class TimerCard extends StatelessWidget {
+  const TimerCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    var gameState = context.watch<GameStateModel>();
+    var timerState = context.watch<TimeModel>();
+
+    final onPrimary = theme.colorScheme.onPrimary;
+    final textStyle = theme.textTheme.displayMedium!.copyWith(color: onPrimary);
+
+    return Card.filled(
+      color: theme.primaryColor,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              timerState.asString,
+              style: textStyle,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                icon: timerState.isInitialized && timerState.isRunning
+                    ? Icon(Icons.pause)
+                    : Icon(Icons.play_arrow),
+                onPressed: timerState.isInitialized && timerState.isRunning
+                    ? () => timerState.pause()
+                    : () => timerState.start(),
+                color: onPrimary,
+              ),
+              IconButton(
+                icon: Icon(Icons.replay),
+                onPressed: () => timerState.reset(),
+                color: onPrimary,
+              ),
+              IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {},
+                color: onPrimary,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -86,15 +142,12 @@ class TeamScoreButtons extends StatelessWidget {
 
     return Center(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           IconButton(
             onPressed: () {
               var result = gameState.answerQuestion(teamID, true);
               //print('answerQuestion returned with ${result}');
-              print(
-                '$teamID. csapat új pontszáma: ${gameState.teams[teamID].score}',
-              );
             },
             icon: Icon(Icons.check),
           ),

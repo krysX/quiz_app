@@ -7,7 +7,6 @@ class ButtonBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var gameState = context.watch<GameStateModel>();
     return Row(
       spacing: 20.0,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +37,15 @@ class QuizColumn extends StatelessWidget {
           spacing: 5.0,
           children: [
             Spacer(),
-            Text(gameState.topicNames[col], style: textStyle),
+            Wrap(
+              children: [
+                Text(
+                  gameState.topicNames[col],
+                  textAlign: TextAlign.center,
+                  style: textStyle,
+                ),
+              ],
+            ),
             Spacer(),
             for (int j = 0; j < gameState.levelValues.length; j++) ...[
               QuizButton(row: j, col: col),

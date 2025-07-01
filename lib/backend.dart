@@ -1,9 +1,9 @@
-//import 'dart:io';
+import 'dart:io';
 //import 'dart:async';
-//import 'dart:convert';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-//import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart';
 //import 'package:provider/provider.dart';
 
 class TeamModel {
@@ -36,76 +36,41 @@ class GameStateModel extends ChangeNotifier {
     required this.players,
     required this.teams,
   }) {
-    //var appDocDir;
-    //getApplicationDocumentsDirectory().then((dir) {
-    //appDocDir = dir.path;
-    //});
-    //print('$appDocDir');
-    //final file = File(path);
-    //Stream<String> lines = file
-    //    .openRead()
-    //    .transform(utf8.decoder)
-    //    .transform(LineSplitter());
+    final file = File(path);
+    final List<String> lines = List.empty(growable: true);
 
-    //var _questions = List<List<String>>.generate(
-    //  nTopics,
-    //  (_) => List<String>.generate(levelValues.length, (_) => ""),
-    //);
-    //
-    //var _topicNames = List<String>.generate(nTopics, (_) => "");
-    //
-    //try {
-    //  _questions = List<List<String>>.generate(
-    //    nTopics,
-    //    (int topic) => List<String>.generate(levelValues.length, (int level) {
-    //      String question = "";
-    //      lines
-    //          .elementAt(topic * (levelValues.length + 1 + 1) + (level + 1))
-    //          .then((str) {
-    //            question = str;
-    //          });
-    //      print(question);
-    //      return question;
-    //    }),
-    //  );
-    //
-    //  print("");
-    //  _topicNames = List<String>.generate(nTopics, (int topic) {
-    //    String topicName = "";
-    //    lines.elementAt(topic * (levelValues.length + 1 + 1)).then((str) {
-    //      topicName = str;
-    //    });
-    //    print(topicName);
-    //    return topicName;
-    //  });
-    //} catch (e) {
-    //  print('Error: $e');
-    //}
-
-    questions = List<List<String>>.generate(
-      nTopics,
-      (topic) => List<String>.generate(
-        levelValues.length,
-        (level) => '${topic + 1}. téma ${level + 1}. kérdése',
-      ),
-    );
-    topicNames = List<String>.generate(
-      nTopics,
-      (topic) => '${topic + 1}. téma',
-    );
-    notifyListeners();
+    file
+        .openRead()
+        .transform(utf8.decoder)
+        .transform(LineSplitter())
+        .listen(
+          (data) {
+            lines.add(data);
+          },
+          onError: (e) {
+            topicNames = List.generate(nTopics, (_) => "");
+            questions = List.generate(
+              nTopics,
+              (_) => List.generate(levelValues.length, (_) => ""),
+            );
+            notifyListeners();
+          },
+          onDone: () {
+            topicNames = List.generate(
+              nTopics,
+              (topic) => lines[topic * (levelValues.length + 2)],
+            );
+            questions = List.generate(
+              nTopics,
+              (topic) => List.generate(
+                levelValues.length,
+                (level) => lines[topic * (levelValues.length + 2) + 1 + level],
+              ),
+            );
+            notifyListeners();
+          },
+        );
   }
-
-  //Future<List<String>> _getTopicNamesFromFile(String path) async {
-  //  var appDocDir = await getApplicationDocumentsDirectory();
-  //  var dirpath = appDocDir.path;
-  //  var file = File('$dirpath/$path');
-  //  Stream<String> lines = await file
-  //      .openRead()
-  //      .transform(utf8.decoder)
-  //      .transform(LineSplitter());
-  //  await for (int i = 0; i < 5; i++) {
-  //}
 
   final String path;
   final int nTopics;

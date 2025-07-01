@@ -3,9 +3,7 @@ import 'package:quiz_app/backend.dart';
 import 'package:provider/provider.dart';
 
 class QuestionBoard extends StatelessWidget {
-  const QuestionBoard({super.key /*, required this.questionText*/});
-
-  //final String questionText;
+  const QuestionBoard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +14,11 @@ class QuestionBoard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(50.0),
       child: Card.filled(
-        color: colorScheme.onPrimary,
+        color: colorScheme.primaryContainer,
         child: Center(
           child: Text(
             gameState.getQuestionText(gameState.currentQuestion),
+            textAlign: TextAlign.center,
             style: textStyle,
           ),
         ),
