@@ -7,6 +7,7 @@ class ButtonBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //var gameState = context.watch<GameStateModel>();
     return Row(
       spacing: 20.0,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -16,6 +17,25 @@ class ButtonBoard extends StatelessWidget {
 
   //
 }
+
+//class TopicRow extends StatelessWidget {
+//  const TopicRow({super.key});
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    var gameState = context.watch<GameStateModel>();
+//    var textStyle = Theme.of(context).textTheme.headlineSmall!.copyWith();
+//    return Flex(
+//      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//      direction: Axis.horizontal,
+//      children: [
+//        for (var topic in gameState.topicNames)
+//
+//          Wrap(spacing: 20.0, children: [Text(topic, style: textStyle)]),
+//      ],
+//    );
+//  }
+//}
 
 class QuizColumn extends StatelessWidget {
   const QuizColumn({super.key, required this.col});
@@ -38,13 +58,8 @@ class QuizColumn extends StatelessWidget {
           children: [
             Spacer(),
             Wrap(
-              children: [
-                Text(
-                  gameState.topicNames[col],
-                  textAlign: TextAlign.center,
-                  style: textStyle,
-                ),
-              ],
+              alignment: WrapAlignment.center,
+              children: [Text(gameState.topicNames[col], style: textStyle)],
             ),
             Spacer(),
             for (int j = 0; j < gameState.levelValues.length; j++) ...[
@@ -84,9 +99,8 @@ class QuizButtonState extends State<QuizButton> {
     var gameState = context.watch<GameStateModel>();
     var value = gameState.levelValues[widget.row];
 
-    void _onTap() {
-      if (_isClicked == true) return;
-      print('${value}-es kérdés megjelölve');
+    void _onPressed() {
+      print('$value-es kérdés megjelölve');
       setState(() {
         _isClicked = true;
       });
@@ -101,7 +115,7 @@ class QuizButtonState extends State<QuizButton> {
       height: 50,
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () => _onTap(),
+        onPressed: _isClicked == false ? () => _onPressed() : null,
         style: buttonStyle,
         child: Text('$value', style: textStyle),
       ),

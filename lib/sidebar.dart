@@ -29,7 +29,6 @@ class TimerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    var gameState = context.watch<GameStateModel>();
     var timerState = context.watch<TimeModel>();
 
     final onPrimary = theme.colorScheme.onPrimary;
